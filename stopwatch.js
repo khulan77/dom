@@ -1,53 +1,36 @@
 const timer = document.getElementById("timer");
-const stopButton = document.getElementById("stop");
-const startButton = document.getElementById("start");
-const resetButton = document.getElementById("reset");
+const startBtn = document.getElementById("start");
+const stopBtn = document.getElementById("stop");
+const resetBtn = document.getElementById("reset");
 
-let timerInterval;
-let startTime = 0;
+let time = 0;
+let interval;
 
-const formatTime = (startTime) => {
-  const hours = Math.floor(startTime / 3600)
-    .toString()
-    .padStart(2, "0");
-  const minutes = Math.floor((startTime % 3600) / 60)
-    .toString()
-    .padStart(2, "0");
-  const seconds = (startTime % 60).toString().padStart(2, "0");
+function updateTimer() {
+  const h = String(Math.floor(time / 3600)).padStart(2, "0");
+  const m = String(Math.floor((time % 3600) / 60)).padStart(2, "0");
+  const s = String(time % 60).padStart(2, "0");
 
-  return `${hours}:${minutes}:${seconds}`;
+  timer.textContent = `${h}:${m}:${s}`;
+}
+
+startBtn.onclick = () => {
+  if (!interval) {
+    interval = setInterval(() => {
+      time++;
+      updateTimer();
+    }, 1000);
+  }
 };
 
-const startTimer = () => {
-  timerInterval = setInterval(() => {
-    startTime++;
-
-    timer.textContent = formatTime(startTime);
-  }, 1000);
-
-  stopButton.disabled = false;
-  startButton.disabled = true;
-  resetButton.disabled = false;
+stopBtn.onclick = () => {
+  clearInterval(interval);
+  interval = null;
 };
 
-const stopTimer = () => {
-  clearInterval(timerInterval);
-
-  stopButton.disabled = true;
-  startButton.disabled = false;
+resetBtn.onclick = () => {
+  clearInterval(interval);
+  interval = null;
+  time = 0;
+  updateTimer();
 };
-
-const resetTimer = () => {
-  clearInterval(timerInterval);
-
-  startTime = 0;
-  timer.textContent = "00:00:00";
-
-  stopButton.disabled = true;
-  resetButton.disabled = true;
-  startButton.disabled = false;
-};
-
-stopButton.addEventListener("click", stopTimer);
-startButton.addEventListener("click", startTimer);
-resetButton.addEventListener("click", resetTimer);
